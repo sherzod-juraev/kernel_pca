@@ -1,8 +1,15 @@
 from fastapi import APIRouter, status
 from .scheme import KernelPCAIn, KernelPCAOut
+from kpca import KernelPCA
 
 
 modules_router = APIRouter()
+
+
+kernel_pca = KernelPCA(
+    gamma=.1,
+    n_components=2
+)
 
 
 @modules_router.post(
@@ -12,6 +19,9 @@ modules_router = APIRouter()
     response_model=KernelPCAOut
 )
 async def kpca_fit(
-        X: KernelPCAIn
+        kernel_pca_scheme: KernelPCAIn
 ) -> KernelPCAOut:
-    pass
+    kernel_pca_scheme = KernelPCAOut(
+        X = kernel_pca.fit(kernel_pca_scheme.X).tolist()
+    )
+    return kernel_pca_scheme
