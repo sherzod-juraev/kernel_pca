@@ -7,7 +7,7 @@ modules_router = APIRouter()
 
 @modules_router.post(
     '/',
-    summary='Kernel principal component analysis',
+    summary='Kernel principal component analysis fit',
     status_code=status.HTTP_200_OK,
     response_model=KernelPCAOut
 )
