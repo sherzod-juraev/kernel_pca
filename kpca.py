@@ -1,6 +1,6 @@
 from scipy.spatial.distance import pdist, squareform
 from scipy.linalg import eigh
-from numpy import ndarray, exp, full, sqrt, where
+import numpy as np
 
 
 class KernelPCA:
@@ -31,15 +31,15 @@ class KernelPCA:
         self.gamma = gamma
         self.n_components = n_components
 
-    def fit(self, X: ndarray, /) -> ndarray:
+    def fit(self, X: np.ndarray, /) -> np.ndarray:
 
         sq_dists = pdist(X, metric='sqeuclidean')
         matrix_sq_dists = squareform(sq_dists)
-        K = exp(-self.gamma * matrix_sq_dists)
-        one_N_matrix = full((X.shape[0], X.shape[0]), 1 / X.shape[0])
+        K = np.exp(-self.gamma * matrix_sq_dists)
+        one_N_matrix = np.full((X.shape[0], X.shape[0]), 1 / X.shape[0])
         K_c = K - one_N_matrix.dot(K) - K.dot(one_N_matrix) + one_N_matrix.dot(K).dot(one_N_matrix)
         eigenvals, eigenvecs = eigh(K_c)
         eigenvals, eigenvecs = eigenvals[::-1], eigenvecs[:, ::-1]
-        eigenvals = where(eigenvals[:self.n_components] < 1e-10, 1e-10, eigenvals[:self.n_components])
-        X_projected = eigenvecs[:, :self.n_components] / sqrt(eigenvals)
+        eigenvals = np.where(eigenvals[:self.n_components] < 1e-10, 1e-10, eigenvals[:self.n_components])
+        X_projected = eigenvecs[:, :self.n_components] / np.sqrt(eigenvals)
         return X_projected
